@@ -1,18 +1,33 @@
 {
-  "name": "tumblr-exif-check",
+  "name": "tumblr-exif-check-package",
   "version": "1.0.0",
   "description": "Checks if your location is exposed on Tumblr",
-  "main": "index.js",
   "scripts": {
-    "start": "electron index.js"
+     "postinstall": "install-app-deps",
+     "start": "npm install && electron ./app",
+     "pack": "build --dir",
+     "dist": "build",
+     "release": "build"
+   },
+  "build": {
+    "appId": "hu.sztupy.tumblrexifcheck",
+    "mac": {
+      "category": "public.app-category.social-networking",
+      "target": "zip"
+    },
+    "win": {
+      "icon": "build/icon.ico",
+      "target": "zip"
+    },
+    "linux": {
+      "target": "zip"
+    }
   },
-  "author": "Zsolt Sz. Sztupák",
+  "repository": "https://github.com/sztupy/tumblr-exif-check",
+  "author": "Zsolt Sz. Sztupák <mail@sztupy.hu>",
   "license": "AGPL-3.0",
   "devDependencies": {
-    "electron": "^1.4.4",
-    "leaflet": "^1.0.1",
-    "exif": "^0.6.0",
-    "tumblr.js": "^1.1.1",
-    "jsdom": "^9.8.3"
+    "electron-builder": "^7.14.2",
+    "electron": "^1.4.4"
   }
 }

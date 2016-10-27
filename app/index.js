@@ -19,7 +19,7 @@ app.on('ready', () => {
     fullscreenable: false,
     fullscreen: false
   });
-  //mainWindow.setMenu(null);
+  mainWindow.setMenu(null);
   mainWindow.loadURL('file://' + __dirname + '/index.html');
   mainWindow.on('closed', function() {
     mainWindow = null;
@@ -38,7 +38,7 @@ ipcMain.on('relaunchApp', () => {
 ipcMain.on('startSearch', (event, data) => {
   console.log(data);
   var keys = {
-    consumer_key: 'fuiKNFp9vQFvjLNvx4sUwti4Yb5yGutBN4Xh10LXZhhRKjWlV4'
+    consumer_key: 'iXDtDNmr4jNfRDHst8uMLyIHUMgYIvNFeI7xLYUHoQf30bEA8m'
   }
   if (data.oauth) {
     keys = data.oauth;
@@ -99,6 +99,7 @@ ipcMain.on('startSearch', (event, data) => {
     client.blogPosts(data.username, options, function(err, body, resp) {
       if (err) {
         if (resp.statusCode == 429) {
+          console.log(resp.headers);
           // just rate limiting, wait and retry
           const limit = findRateLimitHeader(resp.headers, '-limit');
           const remaining = findRateLimitHeader(resp.headers, '-remaining');
