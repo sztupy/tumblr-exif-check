@@ -60,7 +60,7 @@ ipcMain.on('startSearch', (event, data) => {
           var next = alt.shift();
           checkPhoto(next,alt);
         } else {
-          console.log("Warning, could not download " + url + " from post " + main.postUrl + " or any of it's alternatives");
+          console.log("Warning, could not download " + main.url + " from post " + main.postUrl + " or any of it's alternatives");
           photosInQueue -= 1;event.sender.send('progressUpdate', { queue: photosInQueue });
         }
       };

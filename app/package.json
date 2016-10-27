@@ -1,6 +1,6 @@
 {
   "name": "tumblr-exif-check",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Checks if your location is exposed on Tumblr",
   "main": "index.js",
   "repository": "https://github.com/sztupy/tumblr-exif-check",
