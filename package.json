@@ -1,0 +1,18 @@
+{
+  "name": "tumblr-exif-check",
+  "version": "1.0.0",
+  "description": "Checks if your location is exposed on Tumblr",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron index.js"
+  },
+  "author": "Zsolt Sz. Sztupák",
+  "license": "AGPL-3.0",
+  "devDependencies": {
+    "electron": "^1.4.4",
+    "leaflet": "^1.0.1",
+    "exif": "^0.6.0",
+    "tumblr.js": "^1.1.1",
+    "jsdom": "^9.8.3"
+  }
+}

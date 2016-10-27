@@ -1,0 +1,160 @@
+<html>
+<head>
+<meta charset=utf-8 />
+<title>Tumblr EXIF address exposure checker</title>
+<meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+<link rel="stylesheet" href="node_modules/leaflet/dist/leaflet.css" />
+<style>
+  body { margin:0; padding:0; font-family: sans-serif; }
+  #map { position: absolute; bottom:0; right:0; left:0; height:50%; }
+  #text { position: absolute; overflow: auto; top:0; right:0; left:0; height: 50%; }
+  #contents { padding: 1em; }
+  h1, h2, h3 {
+    text-align: center;
+  }
+  form {
+    background-color: #eee;
+    padding: 1em;
+  }
+  label, input {
+    text-align: center;
+    display: block;
+    width: 50%;
+    margin: auto;
+    padding: 0.5em;
+  }
+  #error, #warning {
+    display: none;
+    background-color: #fee;
+    border: 1px solid red;
+    padding: 1em;
+  }
+  #progress, #done {
+    display: none;
+    background-color: #eee;
+    padding: 1em;
+  }
+  #results {
+    background-color: #fee;
+    padding: 1em;
+    margin-top: 1em;
+  }
+  #warning {
+    font-size: 2em;
+  }
+  #retry {
+    display: none;
+    margin-top: 1em;
+  }
+</style>
+</head>
+  <body>
+    <div id="map"></div>
+    <div id="text">
+      <div id="contents">
+        <h1>Check if your location is exposed on Tumblr</h1>
+        <form name="data" id="data">
+          <label for="username">Tumblr username</label><input type="text" name="username"><input type="submit" name="search" value="Search">
+        </form>
+        <div id="error">An error occured while trying to download the blog posts.
+          Please check that you have entered your username correctly,
+          and you have a working internet connection. <b>Note</b>: if in your blog's privacy settings
+          the "allow logged-out users to see this blog" option is disabled,
+          then <i>you also have to enter the proper OAuth credentials</i> for this utility to work.
+          See the Usage section on how to do this step.
+        </div>
+        <div id="progress">
+          <div>Overall progress: <span id="overall-progress">0%</span></div>
+          <div>Remaining images to analyze: <span id="remainig-images">0</span></div>
+        </div>
+        <div id="done">
+          <div>Analysis done</div>
+        </div>
+        <div id="results">
+          <div id="warning">Found image with embedded GPS location information!</div>
+          <div id="location"></div>
+        </div>
+        <form name="retry" id="retry">
+          <input type="submit" name="retryButton" value="Retry">
+        </form>
+        <h1>Info</h1>
+        <p>
+          EXIF is a way to store metadata inside your image files. This includes things like what camera you used to take the pictures, what creative settings you applied on it, and
+          nowadays it might also contain the location where the image was taken.
+        </p>
+        <p>
+          As this information might be considered sensitive data (especially if you have taken the picture at home or at work), most social sites, like Facebook, Twitter or Instagram
+          remove these metadata from the uploaded images, so other people who check them will not find them. Tumblr however does no such thing.
+        </p>
+        <h2>What does this mean?</h2>
+        <p>
+          This means that if you have ever uploaded a picture to tumblr that has GPS information embedded inside, it might expose information about yourself, like where you live and where you work.
+        </p>
+        <h2>What is this tool?</h2>
+        <p>
+          This tool will go through all of your posts and pictures, downloads them and checks if they have any kind of GPS information in them. Also you can zoom in and select an area on the map,
+          and the tool will tell you the list of posts where that particular location can be found in your pictures. See the Usage section for more information.
+        </p>
+        <h2>I seem to be affected, what to do next?</h2>
+        <p>
+          Unfortunately due to the nature of Tumblr, neither deleting the posts, nor deleting your blog will make sure that your pictures are gone, as any reblog of your pictures will
+          still contain the original image, with your location in them. The best thing you can do is to send a message to Tumblr's abuse staff telling them that you accidentally exposed
+          confidential information, and ask them to remove all traces of the offending pictures from their site.
+        </p>
+        <p>
+          Also make sure that you disable location tracking inside your camera, or photo application you are using, so future photos you post will not end up exposing your location. Also
+          spread the word, so maybe Tumblr will eventually fix the problem by removing the GPS data from uploaded pictures both in the future, and retroactively for all, already uploaded images.
+        </p>
+        <h2>I don't think this is a big issue</h2>
+        <p>
+          Might not be. However I think this is a serious issue because of the following points:
+          <ul>
+            <li>Some of Tumblr's userbase can be considered vulnerable. Exposing their home or work location can lead to stalking or real life abuse.</li>
+            <li>Tumblr's API can be used easily to go through pictures to find ones that have location information.</li>
+            <li>Because reblogging will make a copy of your pictures, even if you personally delete/modify your posts/blog, the location data might still be retained.</li>
+          </ul>
+        </p>
+        <h1>Usage</h1>
+        <p>
+          Simply enter your tumblr username and click search. The app will go through your images, and check if any of them has GPS information in them.
+          If it does a big warning saying "Found image with embedded GPS location information!" will show up. If this message does not show up when the analysis
+          ends (and you can see the "Analysis done" message). Then your posts seem to be in order. Note that due to some issues with Tumblr's API embedded images on chat and
+          quote style posts will not be checked, so you might still be vulnerable.
+        </p>
+        <h2>How to use the map?</h2>
+        <p>
+          An advanced feature of the app is where you can specify an area on the map, by zooming in, and during search the application will return all of the posts that have that particular area
+          inside their GPS data. This is so you can check if your home or work location is exposed in your pictures, and you also receive the list with which you can contact
+          Tumblr's abuse staff to ask them to remove the posts, and all reblogs as well.
+        </p>
+        <h2>I have a blog where "allow logged-out users to see this blog" is disabled</h2>
+        <p>
+          Unfortunately in this case the application does not work out of the box, but worry not. You have to first <a href="https://www.tumblr.com/oauth/apps">register an OAuth application</a>.
+          Fill in the mandatory details with any random data. For the application website and callback url simply use your Tumblr blog's address. Once you hit Register, click "Explore API" on the application
+          site, allow the popup to proceed, and then click "Show keys" on the top. From there, copy and paste the codes to the form below before trying to use the application:
+        </p>
+        <form name="oauth" id="oauth">
+          <label for="consumer_key">Consumer Key</label><input type="text" name="consumer_key">
+          <label for="consumer_secret">Consumer Secret</label><input type="text" name="consumer_secret">
+          <label for="token">Token</label><input type="text" name="token">
+          <label for="token_secret">Token Secret</label><input type="text" name="token_secret">
+        </form>
+        <p>
+          Note that because of rate limiting for newly registered applications, the search might take a long time if you have more than 12.500 posts (as it has to wait for an hour after checking 12.500 posts),
+          or if you want to run the application multiple times a day.
+        </p>
+        <h2>Why is this app so limited</h2>
+        <p>
+          Since the application can not just used by you, but by anyone else as well, it's feature set is limited in order to make sure it is (hopefully) only used by legitimate users,
+          and not by people who want to figure out where you live or work.
+        </p>
+        <h2>Is using this application safe?</h2>
+        <p>
+          Maybe, maybe not. The app will only access the Tumblr API to get the list of images you have uploaded, download those images, and process them locally on your machine to check if they have offending data or not.
+          It does use OpenStreetMap's tile server to show you the map data, which it loads using HTTPS. The source code of the application is available at <a href="#">here</a>
+        </p>
+      </div>
+    </div>
+    <script src="src/main.js"></script>
+  </body>
+</html>
